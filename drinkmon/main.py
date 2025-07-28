@@ -34,9 +34,7 @@ def serve_captive_portal():
     loop.run_until_complete(captive_portal_server())
 
 def run_main_app():
-    asyncio.run(app_main(state))
-
-if __name__ == "__main__":
+    print('Starting main app...')
     if I2C_SCAN_MODE:
         i2c_scan()
     else:
@@ -45,4 +43,6 @@ if __name__ == "__main__":
             start_ap()
             serve_captive_portal()
         else:
-            run_main_app()
+            asyncio.run(app_main(state))
+
+

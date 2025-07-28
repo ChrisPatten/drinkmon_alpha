@@ -12,6 +12,9 @@ put-main:
 deploy: put-drinkmon put-main
 	.venv/bin/ampy --port $(PORT) run -n main.py
 
+run:
+	.venv/bin/ampy --port $(PORT) run main.py
+
 session:
 	.venv/bin/python -m start_friend_session.py
 

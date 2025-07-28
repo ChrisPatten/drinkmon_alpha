@@ -111,6 +111,19 @@ To deploy everything to your ESP32 and start the main app:
 make deploy
 ```
 
+## Development
+You can set an environment variable so you don't need to pass a port to ampy every time:
+```bash
+export PORT=/dev/ttyUSB0
+```
+
+Then you can update or run individual files without specifying the port:
+```bash
+ampy run main.py
+
+ampy put drinkmon/app/session.py
+```
+
 ## Testing
 - Backend unit tests: `drinkmon_server/test_drinkmon_api.py`
   - Run with `pytest drinkmon_server/test_drinkmon_api.py`
@@ -127,7 +140,3 @@ MIT License (see `drinkmon/hardware/vl53l0x.py` for sensor driver license)
 ## Credits
 - VL53L0X sensor driver by Tony DiCola/Adafruit
 - FastAPI, MicroPython, ESP32, and all open-source contributors
-
----
-
-For questions or support, open an issue or contact the maintainer.

@@ -19,7 +19,7 @@ def get_start_session_url() -> str:
     return f"{BASE_URL}/start_session"
 
 def get_end_session_url() -> str:
-    return f"{BASE_URL}/end_session"
+    return f"{BASE_URL}/close_session"
 
 def get_friend_poll_url() -> str:
     return f"{BASE_URL}/friend_sessions"
@@ -65,6 +65,7 @@ def friend_poll(state: DrinkmonState):
     Returns an empty list if polling fails or no data is available.
     """
     url = get_friend_poll_url()
+    print(f"Polling friends from {url}")
     if not requests:
         print("HTTP request library not available; cannot poll friend sessions.")
         state.update_friend_colors([])
@@ -82,6 +83,7 @@ def friend_poll(state: DrinkmonState):
             return cols
         else:
             print(f"Friend poll HTTP error: {resp.status_code}")
+            print(resp)
             resp.close()
             state.update_friend_colors([])
             return []
