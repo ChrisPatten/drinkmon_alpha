@@ -1,0 +1,37 @@
+# Python ignores
+__pycache__/
+.pytest_cache/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+*.log
+*.sqlite3
+.env
+.venv/
+venv/
+ENV/
+env/
+*.db
+*.bak
+
+# VSCode ignores
+.vscode/
+.history/
+.settings/
+.code-workspace
+
+# macOS ignores
+.DS_Store
+
+# Firmware ignores
+*.bin
+
+# Config ignores
+config.json

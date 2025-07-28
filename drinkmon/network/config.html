@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Setup</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(120deg, #f8ffae 0%, #43c6ac 50%, #191654 100%);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.8s cubic-bezier(.4,0,.2,1);
+    }
+    .container {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+      padding: 32px 24px;
+      max-width: 400px;
+      width: 100%;
+    }
+    h2 {
+      text-align: center;
+      color: #1976d2;
+      margin-bottom: 24px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #333;
+    }
+    input[type="text"],
+    input[type="password"],
+    input[type="number"] {
+      width: 100%;
+      padding: 8px 10px;
+      margin-bottom: 16px;
+      border: 1px solid #bdbdbd;
+      border-radius: 6px;
+      font-size: 1em;
+      box-sizing: border-box;
+      background: #fafafa;
+      transition: border-color 0.2s;
+    }
+    input[type="number"] {
+      width: 70px;
+      display: inline-block;
+      margin-right: 8px;
+    }
+    .color-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 16px;
+      justify-content: left;
+    }
+    .color-row label {
+      margin-bottom: 0;
+      font-weight: 400;
+      color: #555;
+    }
+    input[type="submit"] {
+      width: 100%;
+      background: #1976d2;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 12px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
+      transition: background 0.2s;
+    }
+    input[type="submit"]:hover {
+      background: #1565c0;
+    }
+    input[type="color"]#color,
+    input[type="color"]#customColorPicker {
+      display: none;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+      padding: 16px;
+      z-index: 1000;
+      min-width: 220px;
+      min-height: 120px;
+      text-align: center;
+    }
+    .modal.active {
+      display: block;
+    }
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+      display: none;
+    }
+    .modal-overlay.active {
+      display: block;
+    }
+    .modal input[type="color"] {
+      display: inline-block;
+      width: 100px;
+      height: 40px;
+      border: none;
+      margin: 12px 0;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Configure Device</h2>
+    <form method="POST" action="/save">
+      <label for="ssid">WiFi SSID:</label>
+      <input type="text" name="ssid" id="ssid" required>
+
+      <label for="pw">Password:</label>
+      <input type="password" name="pw" id="pw" required>
+
+      <div class="color-row">
+        <label for="color">My Session Color:</label>
+        <input type="color" id="color" value="#87CEEB" style="width:48px; height:32px; border:none; margin-right:12px;">
+        <span id="colorPreview" style="display:inline-block; width:32px; height:32px; border-radius:6px; border:1px solid #bdbdbd; background:#87CEEB; vertical-align:middle;"></span>
+    <style>
+      #colorPreview {
+        transition: background 0.5s cubic-bezier(.4,0,.2,1);
+      }
+    </style>
+        <input type="hidden" name="r" id="r" value="135">
+        <input type="hidden" name="g" id="g" value="206">
+        <input type="hidden" name="b" id="b" value="235">
+      </div>
+
+      <input type="submit" value="Save & Restart">
+    </form>
+  </div>
+  <div id="modal" class="modal">
+    <h3>Select a Color</h3>
+    <!-- input is hidden, but will be triggered by JS -->
+    <input type="color" id="customColorPicker" value="#87CEEB">
+    <button id="closeModal">Close</button>
+  </div>
+  <div id="modalOverlay" class="modal-overlay"></div>
+  <script>
+    (function() {
+      const preview = document.getElementById('colorPreview');
+      const modal = document.getElementById('modal');
+      const modalOverlay = document.getElementById('modalOverlay');
+      const customColorPicker = document.getElementById('customColorPicker');
+      const closeModal = document.getElementById('closeModal');
+      const rField = document.getElementById('r');
+      const gField = document.getElementById('g');
+      const bField = document.getElementById('b');
+
+      function hexToRgb(hex) {
+        hex = hex.replace('#', '');
+        if (hex.length === 3) hex = hex.split('').map(x => x + x).join('');
+        const num = parseInt(hex, 16);
+        return [(num >> 16) & 255, (num >> 8) & 255, num & 255];
+      }
+
+      function updateColorFields() {
+        preview.style.background = customColorPicker.value;
+        // Body background remains static gradient
+        const selected = customColorPicker.value;
+        const [r, g, b] = hexToRgb(selected);
+        rField.value = r;
+        gField.value = g;
+        bField.value = b;
+      }
+
+      // Ensure fields are set on page load
+      document.addEventListener('DOMContentLoaded', updateColorFields);
+
+      // Also update before form submit, in case browser autofill or script changes value
+      const form = document.querySelector('form');
+      if (form) {
+        form.addEventListener('submit', updateColorFields);
+      }
+
+      preview.addEventListener('click', () => {
+        modal.classList.add('active');
+        modalOverlay.classList.add('active');
+        // Trigger native color picker
+        setTimeout(() => {
+          customColorPicker.click();
+        }, 100);
+      });
+
+      closeModal.addEventListener('click', () => {
+        modal.classList.remove('active');
+        modalOverlay.classList.remove('active');
+      });
+
+      modalOverlay.addEventListener('click', () => {
+        modal.classList.remove('active');
+        modalOverlay.classList.remove('active');
+      });
+
+      customColorPicker.addEventListener('input', updateColorFields);
+    })();
+  </script>
+</body>
+</html>

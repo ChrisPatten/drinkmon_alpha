@@ -1,0 +1,1 @@
+# drinkmon package init
