@@ -29,8 +29,12 @@ def try_get_config():
         return None
 
 def serve_captive_portal():
+    async def led_fade_loop():
+        while True:
+            await fade_led_spectrum()
+
     loop = asyncio.get_event_loop()
-    loop.create_task(fade_led_spectrum())
+    loop.create_task(led_fade_loop())
     loop.run_until_complete(captive_portal_server())
 
 def run_main_app():

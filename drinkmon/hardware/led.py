@@ -3,7 +3,7 @@ LED control functions: PWM setup, color setting, fading, spectrum.
 Implements set_color, fade_led_spectrum, hsv_to_rgb for extensible LED control.
 """
 import machine
-import utime as time
+import uasyncio as asyncio
 import math
 
 RED_PIN, GREEN_PIN, BLUE_PIN = 19, 18, 5
@@ -25,17 +25,17 @@ def set_color(rgb, brightness):
     for pwm, v in zip((pwm_r, pwm_g, pwm_b), rgb):
         pwm.duty(int(v/255 * brightness * MAX_DUTY))
 
-def fade_led_spectrum(duration: float = 0.02, step_size: float = 0.002) -> None:
+async def fade_led_spectrum(duration: float = 0.02, step_size: float = 0.002) -> None:
     """
     Fade the LED through the spectrum of colors using PWM.
+    This coroutine can be scheduled with uasyncio.create_task.
     """
     global _fade_led_hue
     _fade_led_hue = (_fade_led_hue + step_size) % 1.0
     hue = _fade_led_hue
     rgb = hsv_to_rgb(hue)
     set_color(rgb, 1.0)
-    ms = max(1, int(duration * 1000))
-    time.sleep_ms(ms)
+    await asyncio.sleep(duration)
 
 def hsv_to_rgb(h: float, s: float = 1.0, v: float = 1.0) -> tuple:
     i = int(h * 6)

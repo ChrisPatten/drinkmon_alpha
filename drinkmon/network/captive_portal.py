@@ -7,7 +7,7 @@ import machine
 import utime as time
 import uasyncio as asyncio
 
-def load_html_template(file_path: str = "config.html") -> str:
+def load_html_template(file_path: str = "./drinkmon/network/config.html") -> str:
     """
     Load the captive portal HTML template from an external file.
     """

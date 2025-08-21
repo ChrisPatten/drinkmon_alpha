@@ -9,6 +9,9 @@ put-drinkmon:
 put-main:
 	.venv/bin/ampy --port $(PORT) put main.py
 
+put-config:
+	.venv/bin/ampy --port $(PORT) put config.json
+
 deploy: put-drinkmon put-main
 	.venv/bin/ampy --port $(PORT) run -n main.py
 
@@ -20,3 +23,6 @@ session:
 
 clear-sessions:
 	curl -X POST https://drinkmon.chrispatten.dev/api/clear_sessions
+
+list:
+	.venv/bin/ampy --port $(PORT) ls
